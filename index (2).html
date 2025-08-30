@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>KING PREDICTOR</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.5;
+      animation: moveOrb 8s infinite alternate ease-in-out;
+      z-index: 0;
+    }
+    .orb1 { background: #ff00ff; top: 10%; left: 15%; }
+    .orb2 { background: #00ffff; bottom: 10%; right: 15%; animation-delay: 2s; }
+
+    @keyframes moveOrb {
+      from { transform: translateY(0) translateX(0); }
+      to { transform: translateY(-40px) translateX(40px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      padding: 50px 60px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0,255,255,0.4), 0 0 80px rgba(255,0,255,0.2);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, gold, #ffcc00, #ff9900);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,165,0,0.6);
+    }
+
+    input {
+      width: 250px;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, gold, orange);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 0 20px gold;
+      transition: 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, orange, gold);
+    }
+
+    /* Hide prediction by default */
+    #prediction-page { 
+      display: none; 
+      opacity: 0; 
+      transform: scale(0.8); 
+    }
+
+    /* Animation classes */
+    .fadeOutUp {
+      animation: fadeOutUp 0.8s forwards;
+    }
+    .fadeInZoom {
+      animation: fadeInZoom 1s forwards;
+    }
+
+    @keyframes fadeOutUp {
+      to {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+    }
+    @keyframes fadeInZoom {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    #result {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: cyan;
+      text-shadow: 0 0 20px cyan, 0 0 40px #0ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <!-- Login Page -->
+  <div class="container" id="login-page">
+    <h1>👑 KING PREDICTOR LOGIN 👑</h1>
+    <input id="username" placeholder="Username"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+    <input id="uid" placeholder="Enter UID"><br>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- Prediction Page -->
+  <div class="container" id="prediction-page">
+    <h1>👑 KING PREDICTOR 👑</h1>
+    <p>Press button to get prediction:</p>
+    <button onclick="predict()">Predict Now</button>
+    <p id="result"></p>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    function login() {
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
+      const uid = document.getElementById("uid").value.trim();
+
+      if(u === "MANOJ" && p === "MANOJ" && uid) {
+        const loginPage = document.getElementById("login-page");
+        const predictionPage = document.getElementById("prediction-page");
+
+        // animation
+        loginPage.classList.add("fadeOutUp");
+        setTimeout(() => {
+          loginPage.style.display = "none";
+          predictionPage.style.display = "block";
+          predictionPage.classList.add("fadeInZoom");
+        }, 800);
+      } else {
+        alert("Username/Password/UID sahi daalo! (Use: MANOJ / MANOJ)");
+      }
+    }
+
+    function predict() {
+      const choices = ["BIG", "SMALL"];
+      const random = choices[Math.floor(Math.random() * choices.length)];
+      document.getElementById("result").textContent = "Result: " + random;
+    }
+
+    function logout() {
+      const loginPage = document.getElementById("login-page");
+      const predictionPage = document.getElementById("prediction-page");
+
+      predictionPage.style.display = "none";
+      loginPage.style.display = "block";
+      loginPage.classList.remove("fadeOutUp");
+    }
+  </script>
+</body>
+</html>

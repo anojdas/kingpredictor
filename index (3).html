@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>KING PREDICTOR</title>
+<style>
+body{margin:0;font-family:Poppins,sans-serif;height:100vh;display:flex;justify-content:center;align-items:center;background:#0d0d1a;color:#fff;overflow:hidden;}
+.orb{position:absolute;width:250px;height:250px;border-radius:50%;background: linear-gradient(45deg,#ff00ff,#00ffff);filter:blur(80px);opacity:0.6;animation: floatOrb 10s infinite alternate;z-index:0;}
+.orb1{top:10%;left:15%;}
+.orb2{bottom:10%;right:15%;animation-delay:3s;}
+@keyframes floatOrb{from{transform:translateY(0) translateX(0);}to{transform:translateY(-50px) translateX(50px);}}
+
+.container{position:relative;z-index:1;background: rgba(20,20,40,0.85);border:2px solid #00ffff;border-radius:20px;padding:40px 50px;width:400px;text-align:center;box-shadow:0 0 20px #00ffff,0 0 40px #ff00ff;transition:all 0.8s ease;}
+h1{font-size:2rem;margin-bottom:20px;color:#00ffff;text-shadow:0 0 10px #00ffff,0 0 20px #ff00ff;}
+input{width:80%;padding:12px;margin:15px 0;border:none;border-radius:12px;text-align:center;background: rgba(255,255,255,0.05);color:#00ffff;font-size:1rem;}
+button{padding:12px 30px;margin-top:10px;border:none;border-radius:12px;font-weight:bold;cursor:pointer;color:#000;background: linear-gradient(135deg,#00ffff,#ff00ff);box-shadow:0 0 20px #00ffff;transition:0.3s;}
+button:hover{transform:scale(1.05);background: linear-gradient(135deg,#ff00ff,#00ffff);box-shadow:0 0 30px #ff00ff,0 0 30px #00ffff;}
+#result{font-size:2rem;font-weight:bold;margin-top:20px;color:cyan;text-shadow:0 0 20px cyan,0 0 40px #0ff;}
+
+/* Animations */
+.fadeOutUp {animation: fadeOutUp 0.8s forwards;}
+@keyframes fadeOutUp {from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-50px);}}
+
+.fadeInZoom {animation: fadeInZoom 1s forwards;}
+@keyframes fadeInZoom {from{opacity:0;transform:scale(0.8);}to{opacity:1;transform:scale(1);}}
+
+.registerLink{
+  display:inline-block;
+  padding:10px 20px;
+  margin:10px 0;
+  border-radius:12px;
+  background: linear-gradient(135deg,#ff00ff,#00ffff);
+  color:#000;
+  font-weight:bold;
+  text-decoration:none;
+  box-shadow:0 0 15px #ff00ff,0 0 15px #00ffff;
+  transition:0.3s;
+}
+.registerLink:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 25px #ff00ff,0 0 25px #00ffff;
+}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="container" id="mainContainer">
+  <h1>👑 KING PREDICTOR 👑</h1>
+
+  <div id="uidSection">
+    <input id="uid" placeholder="Enter your UID"><br>
+
+    <!-- REGISTER link as a neon button -->
+    <a href="https://www.goaok.bet/#/register?invitationCode=714658004690" target="_blank" class="registerLink">
+      REGISTER AND PASTE UID
+    </a><br>
+
+    <button onclick="requestPermission()">Request Permission</button>
+    <p id="status"></p>
+  </div>
+
+  <div id="predictionPage" style="display:none;">
+    <button id="predictBtn" onclick="predict()">Start Prediction</button>
+    <p id="result"></p>
+  </div>
+</div>
+
+<script>
+let lastPredictionTime = 0; // timestamp for cooldown
+
+function requestPermission() {
+  const uid = document.getElementById("uid").value.trim();
+  if(!uid){ alert("Enter your UID!"); return; }
+
+  let pendingUIDs = JSON.parse(localStorage.getItem("pendingUIDs") || "[]");
+  if(!pendingUIDs.includes(uid)){
+    pendingUIDs.push(uid);
+    localStorage.setItem("pendingUIDs", JSON.stringify(pendingUIDs));
+    alert("UID sent to admin for verification ✅");
+  }
+  checkPermission(uid);
+}
+
+function checkPermission(uid){
+  let grantedUIDs = JSON.parse(localStorage.getItem("grantedUIDs") || "[]");
+  if(grantedUIDs.includes(uid)){
+    // Animate UID section out
+    const uidSection = document.getElementById("uidSection");
+    uidSection.classList.add("fadeOutUp");
+
+    setTimeout(()=>{
+      uidSection.style.display="none";
+
+      // Animate prediction page in (neon fade-in zoom)
+      const pred = document.getElementById("predictionPage");
+      pred.style.display="block";
+      pred.classList.add("fadeInZoom");
+      document.getElementById("status").textContent = "Permission granted! Prediction unlocked.";
+    },800);
+
+  } else {
+    document.getElementById("status").textContent = "Waiting for admin to grant permission...";
+    setTimeout(()=> checkPermission(uid), 2000);
+  }
+}
+
+// Prediction logic: only 1 per minute
+function predict(){
+  const now = Date.now();
+  if(now - lastPredictionTime < 60000){
+    const remaining = Math.ceil((60000 - (now - lastPredictionTime))/1000);
+    alert(`Please wait ${remaining} seconds before next prediction.`);
+    return;
+  }
+  lastPredictionTime = now;
+
+  const choices = ["BIG","SMALL"];
+  const resultEl = document.getElementById("result");
+  const random = choices[Math.floor(Math.random()*choices.length)];
+  resultEl.textContent = "Prediction: " + random;
+}
+</script>
+</body>
+</html>
